@@ -1,12 +1,23 @@
 module App
   def self.production
-    require 'puts_repo'
-    make(PutsRepo.new(STDOUT), Time)
+    require 'yaml/store'
+    backend = YAML::Store.new('events.yml')
+    require 'event_store'
+    make(nil, EventStore.new(backend), Time)
   end
-  def self.make(repo, clock)
+  def self.make(read, write, clock)
     require 'sinatra/base'
     Sinatra.new do
       enable :inline_templates
+      get '/' do
+        now = params['now'] || Time.now
+        require 'remaining_time'
+        remaining_time = RemainingTime.idrate(read.all_events, now)
+        require 'format_time'
+        <<~HTML
+        <span class='remaining_time'>#{format_time remaining_time}</span>
+        HTML
+      end
       get '/new' do
         <<~HTML
         <form method='POST' action='/new'>
@@ -17,7 +28,9 @@ module App
       end
       post '/new' do
         duration = params['duration'].to_i
-        repo.start_new_timer(duration, clock.now)
+        write.append_events([
+          [:start_new_timer, duration, clock.now],
+        ])
         redirect '/'
       end
     end

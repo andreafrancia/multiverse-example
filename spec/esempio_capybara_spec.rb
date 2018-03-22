@@ -3,10 +3,12 @@ require 'capybara'
 describe do
   let(:now) { double :now }
 
-  it do
-    user = Capybara::Session.new(:rack_test, app)
+  it '/new' do
+    allow(read).to receive(:all_events).and_return([])
     allow(clock).to receive(:now).and_return(now)
-    expect(repo).to receive(:start_new_timer).with(25, now)
+    expect(write).to receive(:append_events).with([
+      [:start_new_timer, 25, now],
+    ])
 
     user.visit '/new'
     user.fill_in 'duration', with: "25"
@@ -16,24 +18,25 @@ describe do
   end
 
   let(:user) do
-    require 'rack/test'
-    Rack::Test::Session.new(app)
+    Capybara::Session.new(:rack_test, app)
   end
 
   it do
-    allow(clock).to receive(:now).and_return(now)
-    expect(repo).to receive(:start_new_timer).with(25, now)
+    expect(read).to receive(:all_events).and_return([
+      [:start_new_timer, 25*60, Time.parse('9:00')],
+    ])
+    user.visit '/'
 
-    user.post '/new', duration: "25"
+    remaining_time = user.find('.remaining_time').text
 
-    expect(user.last_response.status).to eq(302)
-    expect(user.last_response.location).to eq('http://example.org/')
+    expect(remaining_time).to eq('25:00')
   end
-  let(:repo) { double :repo }
+  let(:write) { double :write }
+  let(:read) { double :read }
   let(:clock) { double :clock }
   def app
     require 'app'
-    app = App.make(repo, clock)
+    app = App.make(read, write, clock)
     app.class_eval do
       disable :show_exceptions
       enable :raise_errors
