@@ -25,7 +25,7 @@ describe do
     expect(read).to receive(:all_events).and_return([
       [:start_new_timer, 25*60, Time.parse('9:00')],
     ])
-    user.visit '/'
+    user.visit '/?now=9:00'
 
     remaining_time = user.find('.remaining_time').text
 
