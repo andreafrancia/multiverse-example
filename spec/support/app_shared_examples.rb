@@ -1,6 +1,7 @@
 RSpec.shared_examples App do
-  specify 'whole workflow' do
-    earth="test-#{Time.now.to_f}"
+  earth="test-#{Time.now.to_f}"
+
+  specify "whole workflow, earth=#{earth}" do
     user.visit "/?earth=#{earth}"
     expect(user.text).to eq('not started')
 

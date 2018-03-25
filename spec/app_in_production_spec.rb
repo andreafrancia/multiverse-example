@@ -1,13 +1,13 @@
 require 'app'
-describe "App.in_production" do
+describe "App.in_production", :production do
   require 'support/app_shared_examples'
   it_behaves_like App
 
   let(:user) do
     require 'capybara'
-    require 'pry'
     require "selenium-webdriver"
-    Capybara::Session.new(:selenium_chrome_headless, app)
+    Capybara.app_host = 'https://limitless-headland-65698.herokuapp.com/'
+    Capybara::Session.new(:selenium_chrome_headless)
   end
   let(:app) do
     require 'app'
