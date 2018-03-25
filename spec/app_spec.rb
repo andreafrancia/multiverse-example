@@ -17,7 +17,6 @@ describe do
     expect(user.find('.remaining_time').text).to eq('09:59')
   end
 
-
   let(:user) do
     require 'capybara'
     Capybara::Session.new(:rack_test, app)

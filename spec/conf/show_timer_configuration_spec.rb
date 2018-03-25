@@ -13,10 +13,10 @@ describe ShowTimerConfiguration do
   end
 
   it do
-    expect(read).to receive(:all_events).and_return([
+    expect(read).to receive(:all_events).with('earth').and_return([
       [:start_new_timer, 25*60, Time.parse('9:00')],
     ])
-    user.visit '/?now=9:00'
+    user.visit '/?now=9:00&earth=earth'
 
     remaining_time = user.find('.remaining_time').text
 

@@ -10,14 +10,14 @@ describe StartTimerConfiguration do
     require 'sinatra'
     app = Sinatra.new
     conf.configure app
-    app.disable :show_exceptions
-    app.enable :raise_errors
+#    app.disable :show_exceptions
+#    app.enable :raise_errors
     Capybara::Session.new(:rack_test, app)
   end
 
 
   it 'without a=1' do
-    expect(write).to receive(:append_events).with([
+    expect(write).to receive(:append_events).with('production', [
       [:start_new_timer, 25 * 60 , now],
     ])
 
@@ -31,7 +31,7 @@ describe StartTimerConfiguration do
   it '/new' do
     require 'time'
     inserted_time = Time.parse("2018-02-01T09:00")
-    expect(write).to receive(:append_events).with([
+    expect(write).to receive(:append_events).with('production', [
       [:start_new_timer, 25 * 60, inserted_time],
     ])
 
