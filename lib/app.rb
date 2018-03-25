@@ -2,11 +2,14 @@ module App
   def self.production
     require 'yaml/store'
     backend = YAML::Store.new('events.yml')
+    make(backend)
+  end
+  def self.make(backend)
+    clock = Time
     require 'event_store'
     event_store = EventStore.new(backend)
-    make(event_store, event_store, Time)
-  end
-  def self.make(read, write, clock)
+    read = event_store
+    write = event_store
     configurations = []
     require 'conf/show_timer_configuration'
     configurations << ShowTimerConfiguration.new(read, clock)

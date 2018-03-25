@@ -4,8 +4,8 @@ describe EventStore do
   subject(:store) { EventStore.new(backend) }
 
   let(:backend) do
-    require 'yaml/store'
-    YAML::Store.new('tmp/events.yml')
+    require 'fake_pstore'
+    FakePstore.make
   end
 
   before do
