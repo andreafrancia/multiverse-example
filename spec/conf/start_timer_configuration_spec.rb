@@ -12,6 +12,7 @@ describe StartTimerConfiguration do
     conf.configure app
 #    app.disable :show_exceptions
 #    app.enable :raise_errors
+    require 'capybara'
     Capybara::Session.new(:rack_test, app)
   end
 
