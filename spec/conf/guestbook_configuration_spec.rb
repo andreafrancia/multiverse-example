@@ -76,7 +76,7 @@ describe GuestbookConfiguration do
   def redirect_of response
     [response.status, path(response.location)]
   end
-  
+
   def path location
     require 'uri'
     uri = URI.parse(location)
