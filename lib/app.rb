@@ -15,6 +15,8 @@ module App
     configurations << ShowTimerConfiguration.new(read, clock)
     require 'conf/start_timer_configuration'
     configurations << StartTimerConfiguration.new(write, clock)
+    require 'conf/guestbook_configuration'
+    configurations << GuestbookConfiguration.new("/guestbook", read, write)
     require 'sinatra/base'
     app = Sinatra.new
     configurations.each do |conf|
