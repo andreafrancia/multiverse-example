@@ -27,7 +27,14 @@ class GuestbookConfiguration
       write.append_events(earth, [
           [:guestbook_signed, first_name, last_name]
       ])
-      redirect to(path)
+      require 'uri'
+      query = if earth == 'production'
+                ''
+              else
+                "?#{URI.encode_www_form('earth'=>earth)}"
+              end
+
+      redirect to("#{path}#{query}")
     end
   end
 
@@ -39,23 +46,31 @@ class GuestbookConfiguration
 
     def to_html
       <<~HTML
-#{signatures_as_html}
+        #{signatures_as_html}
                 <form method="POST">
                    <label for="first-name">First Name:</label>
                    <input type="text" name="first-name"/> 
                    <label for="last-name">Last Name:</label>                 
                    <input type="text" name="last-name"/>
-                   <input id='earth' type="hidden" name="earth" value='#{earth_html}'/>
+                   #{earth_field_html}
                    <input type="submit" value="Sign!"/>
                 </form>
       HTML
-
     end
 
     private
     def earth_html
       require 'cgi/util'
       CGI.escape_html @earth
+    end
+    def earth_field_html
+      if @earth
+      <<~HTML
+         <input id='earth' type="hidden" name="earth" value='#{earth_html}'/>
+      HTML
+      else
+        ''
+      end
     end
 
     def signatures_as_html

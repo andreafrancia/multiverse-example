@@ -3,13 +3,15 @@ RSpec.shared_examples AnAppWithAGuestbook do
   require 'support/read_signatures'
   before { user.extend ReadSignatures}
 
+  earth = "test-#{Time.now.to_f}"
+
   it "starts with no signatures" do
-    user.visit '/guestbook'
+    user.visit "/guestbook?earth=#{earth}"
     expect(user.signatures_read).to eq([])
   end
 
   it 'can be signed' do
-    user.visit '/guestbook'
+    user.visit "/guestbook?earth=#{earth}"
 
     sign_as 'Mark', 'Milton'
     sign_as 'Clark', 'Kent'

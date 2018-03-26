@@ -31,20 +31,16 @@ describe GuestbookConfiguration do
   end
 
   describe 'the form' do
-    describe 'earth_field' do
-      subject(:earth_field) {user.find_by_id('earth', visible: false)}
-      context 'when earth is specified' do
-        before {user.visit '/my/guestbook?earth=earth-616'}
-        it {expect(earth_field[:type]).to eq('hidden')}
-        it {expect(earth_field[:name]).to eq('earth')}
-        it {expect(earth_field[:value]).to eq('earth-616')}
-      end
-      context 'when earth is specified' do
-        before {user.visit '/my/guestbook'}
-        it {expect(earth_field[:type]).to eq('hidden')}
-        it {expect(earth_field[:name]).to eq('earth')}
-        it {expect(earth_field[:value]).to eq('production')}
-      end
+    let(:earth_fields) { user.all('#earth', visible: false).to_a }
+    context 'when earth is specified' do
+      subject(:earth_field) {earth_fields.first}
+      before {user.visit '/my/guestbook?earth=earth-616'}
+      it {expect(earth_field[:type]).to eq('hidden')}
+      it {expect(earth_field[:name]).to eq('earth')}
+      it {expect(earth_field[:value]).to eq('earth-616')}
+    end
+    context 'when earth is specified' do
+      it {expect(earth_fields).to eq([])}
     end
   end
 
@@ -61,8 +57,34 @@ describe GuestbookConfiguration do
                  'last-name' => "Stark",
                  'earth' => 'earth-1'
 
-    expect(browser.last_response.status).to eq(302)
-    expect(browser.last_response.location).to eq("http://example.org/my/guestbook")
+    expect(redirect_of(browser.last_response)).to eq([302, "/my/guestbook?earth=earth-1"])
+  end
+
+  it 'does not redirects ' do
+    require 'rack/test'
+    browser = Rack::Test::Session.new(app)
+    allow(write).to receive(:append_events)
+
+    browser.post '/my/guestbook',
+                 'first-name' => "Tony",
+                 'last-name' => "Stark"
+
+    expect(redirect_of(browser.last_response)).to eq([302, "/my/guestbook"])
+  end
+
+
+  def redirect_of response
+    [response.status, path(response.location)]
+  end
+  
+  def path location
+    require 'uri'
+    uri = URI.parse(location)
+    if uri.query
+      "#{uri.path}?#{uri.query}"
+    else
+      "#{uri.path}"
+    end
   end
 
 end

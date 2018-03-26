@@ -2,6 +2,8 @@ require 'app'
 describe "App.in_production", :production do
   require 'support/app_shared_examples'
   it_behaves_like App
+  require 'support/an_app_with_a_guestbook_shared_examples'
+  #it_behaves_like AnAppWithAGuestbook
 
   let(:user) do
     require 'capybara'
