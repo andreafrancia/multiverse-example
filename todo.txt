@@ -1,0 +1,2 @@
+- mettere insieme il form nella pagina del timer.
+- spostare la pagina del timer da '/' a '/timer'

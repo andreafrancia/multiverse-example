@@ -18,5 +18,13 @@ class Timer < Struct.new(:started?,
     end
     return new(started, start_time, duration)
   end
+  def remaining_time_as_string(now)
+    require 'format_time'
+    if started?
+      format_time remaining_time_at(now)
+    else
+      'not started'
+    end
+  end
 end
 

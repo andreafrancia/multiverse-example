@@ -27,14 +27,8 @@ class GuestbookConfiguration
       write.append_events(earth, [
           [:guestbook_signed, first_name, last_name]
       ])
-      require 'uri'
-      query = if earth == 'production'
-                ''
-              else
-                "?#{URI.encode_www_form('earth'=>earth)}"
-              end
-
-      redirect to("#{path}#{query}")
+      require 'url_with_earth'
+      redirect to(UrlWithEarth.new(path,earth).to_url)
     end
   end
 

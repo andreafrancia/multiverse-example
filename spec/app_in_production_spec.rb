@@ -1,8 +1,14 @@
 require 'app'
-describe "App.in_production", :production do
-  require 'support/app_shared_examples'
-  it_behaves_like App
-  require 'support/an_app_with_a_guestbook_shared_examples'
+
+describe App, :production do
+
+  require 'shared_examples/an_app_with_a_timer_simple'
+  #it_behaves_like AnAppWithATimerSimple
+
+  require 'shared_examples/an_app_with_a_timer'
+  it_behaves_like AnAppWithATimer
+
+  require 'shared_examples/an_app_with_a_guestbook'
   it_behaves_like AnAppWithAGuestbook
 
   let(:user) do
